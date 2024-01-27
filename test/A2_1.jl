@@ -8,9 +8,6 @@ function show_thermalisation(M, L, z, n; observables=Function[], observables_int
 		# check for Thermalization
 		if !themalized && i%length(therm_N) == 0
 			if !any(iszero.(therm_N)) && maximum(therm_N) - minimum(therm_N) < lat.M^2 ÷ (L * 25)
-				println("Thermalized at i = $i")
-				println("max(therm_N) = $(maximum(therm_N))")
-				println("min(therm_N) = $(minimum(therm_N))")
 				themalized = true
 				therm_ind = i
 			else
@@ -19,8 +16,8 @@ function show_thermalisation(M, L, z, n; observables=Function[], observables_int
 		end
 
 		# Progress bar
-		if i % (n ÷ 1000) == 1
-			progress_bar(i/n)
+		if i % (n ÷ 1000) == 1 || i == n
+			progress_bar(i/n, keep_bar=false)
 		end
 
 		# chose 50/50 if insertion or deletion
@@ -41,7 +38,7 @@ end
 
 
 
-function therm_test()
+function A2_1()
 	n = 5e4
 	M = 64
 	L = 8
@@ -53,6 +50,7 @@ function therm_test()
 	
 	lat, obs, therm_ind= show_thermalisation(M, L, z, n, observables=[N, Nh, Nv], observables_interval=n÷100)
 	plot(eachindex(obs[1]).* (n÷100) .- (1 - n÷100), obs[1:3], dpi=300, title="Thermalisation", label=["N" "Nh" "Nv"])
-	println("Thermalized at i = $therm_ind")
 	vline!([therm_ind], label="Thermalization")
+	savefig("media/A2_1/therm_test.png")
+	visualize_RodLat2D(lat)
 end

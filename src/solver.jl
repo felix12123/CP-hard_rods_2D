@@ -2,7 +2,6 @@ using Random
 
 
 
-
 """
 	try_insert!(lat::RodLat2D)
 
@@ -16,7 +15,7 @@ Attempt to insert a rod into the lattice `lat` according to the hard rod model i
 """
 function try_insert!(lat::RodLat2D)
 	N = length(lat.rods[1]) + length(lat.rods[2])
-	α_ins = 2*lat.M^2 / (N+1) * z
+	α_ins = 2*lat.M^2 / (N+1) * lat.z
 	xy = (rand(1:lat.M), rand(1:lat.M-lat.L+1))
 
 	if bitrand()[1] # horizontal
@@ -36,6 +35,7 @@ function try_insert!(lat::RodLat2D)
 	end
 end
 
+
 """
 	try_delete!(lat::RodLat2D)
 
@@ -50,7 +50,7 @@ If a rod is successfully deleted, the function returns `true`, otherwise it retu
 """
 function try_delete!(lat::RodLat2D)
 	N = length(lat.rods[1]) + length(lat.rods[2])
-	α_del = N / (2 * lat.M^2 * z)
+	α_del = N / (2 * lat.M^2 * lat.z)
 	if rand() < α_del
 		i = rand(1:N)
 		if i <= length(lat.rods[1])
@@ -68,7 +68,6 @@ end
 
 function make_thermalized_lat(M, L, z, n)
 	themalized = false
-	therm_ind = 0
 	therm_N = repeat([0], 75)
 	lat = RodLat2D(M, L, z)
 	
@@ -92,6 +91,7 @@ function make_thermalized_lat(M, L, z, n)
 	end
 	error("Thermalization not reached after $n steps.")
 end
+
 
 """
 simulate_RodLat2D(M, L, z, n; observables=Function[], observables_interval=1e2)
@@ -123,8 +123,8 @@ function simulate_RodLat2D(M, L, z, n; observables=Function[], observables_inter
 	# run simulation
 	for i in 1:n
 		# Progress bar
-		if i % (n ÷ 1000) == 1
-			progress_bar(i/n)
+		if i % (n ÷ 100) == 1
+			progress_bar(i/n, keep_bar=false)
 		end
 
 		# chose 50/50 if insertion or deletion
@@ -141,6 +141,8 @@ function simulate_RodLat2D(M, L, z, n; observables=Function[], observables_inter
 			end
 		end 
 	end
+
+	progress_bar(1.0, keep_bar=false)
 	return lat, observed_vals, therm_ind
 end
 
