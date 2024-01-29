@@ -4,10 +4,12 @@ using Measurements
 using LsqFit
 
 function A2_4()
+	println("==================== A2_4 ====================")
 	zs = [0.05, 0.125, 0.25, 0.56, 0.84, 1.1, 1.15, 1.5]
 	M = 64
 	L = 8
-	n = 4e8
+	n = 4e9
+	n=1e8
 	
 	Nh(lat) = length(lat.rods[1])
 	Nv(lat) = length(lat.rods[2])

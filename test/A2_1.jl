@@ -27,7 +27,7 @@ function show_thermalisation(M, L, z, n; observables=Function[], observables_int
 		end
 
 		# chose 50/50 if insertion or deletion
-		if bitrand()[1] # insertion
+		if rand((true, false)) # insertion
 			try_insert!(lat)
 		else # deletion
 			try_delete!(lat)
@@ -45,10 +45,11 @@ end
 
 
 function A2_1()
+	println("==================== A2_1 ====================")
 	n = 5e4
 	M = 64
 	L = 8
-	z = 1.1
+	z = 0.84
 	
 	Nh(lat) = length(lat.rods[1])
 	Nv(lat) = length(lat.rods[2])

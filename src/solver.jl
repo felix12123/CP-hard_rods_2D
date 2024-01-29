@@ -16,10 +16,9 @@ Attempt to insert a rod into the lattice `lat` according to the hard rod model i
 function try_insert!(lat::RodLat2D)::Bool
 	N = length(lat.rods[1]) + length(lat.rods[2])
 	α_ins = 2*lat.M^2 / (N+1) * lat.z
-	horizontal = bitrand()[1]	
 	if rand() < α_ins
 		xy = (rand(1:lat.M), rand(1:lat.M))
-		return insert_rod!(lat=lat, pos=xy, horizontal=bitrand()[1])
+		return insert_rod!(lat=lat, pos=xy, horizontal=rand((true, false)))
 	end
 	return false
 end
@@ -71,7 +70,7 @@ function make_thermalized_lat(M, L, z, n)
 		end
 
 		# chose 50/50 if insertion or deletion
-		if bitrand()[1] # insertion
+		if rand((true, false)) # insertion
 			try_insert!(lat)
 		else # deletion
 			try_delete!(lat)
@@ -102,9 +101,9 @@ Simulates the behavior of a 2D lattice of rods.
 
 """
 function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables=Function[], observables_interval=max(1, n÷1e4))
-		n = ceil(Int, n)
-		M = ceil(Int, M)
-		L = ceil(Int, L)
+	n = ceil(Int, n)
+	M = ceil(Int, M)
+	L = ceil(Int, L)
 		
 	# storage containers for observables
 	observed_vals = [zeros(ceil(Int, n / observables_interval)) for i in eachindex(observables)]
@@ -115,12 +114,12 @@ function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables=Funct
 	# run simulation
 	for i in 1:n
 		# Progress bar
-		if i % (n ÷ 100) == 1
-			progress_bar(i/n, keep_bar=false)
-		end
+		# if i % (n ÷ 100) == 1
+		# 	progress_bar(i/n, keep_bar=false)
+		# end
 
 		# chose 50/50 if insertion or deletion
-		if bitrand()[1] # insertion
+		if rand((true, false)) # insertion
 			try_insert!(lat)
 		else # deletion
 			try_delete!(lat)
@@ -134,7 +133,7 @@ function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables=Funct
 		end 
 	end
 
-	progress_bar(1.0, keep_bar=false)
+	# progress_bar(1.0, keep_bar=false)
 	return lat, observed_vals, therm_ind
 end
 

@@ -72,7 +72,7 @@ function insert_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool; test_c
 	end
 	return false
 end
-insert_rod!(;lat=RodLat2D(16, 4, 0.5), pos=(10, 15), horizontal=bitrand()[1])=insert_rod!(lat, pos, horizontal)
+insert_rod!(;lat=RodLat2D(16, 4, 0.5), pos=(10, 15), horizontal=rand((true, false)))=insert_rod!(lat, pos, horizontal)
 
 """
 	delete_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
