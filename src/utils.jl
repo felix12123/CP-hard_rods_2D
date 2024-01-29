@@ -34,13 +34,13 @@ function visualize_RodLat2D(lat)
 	plt = plot(title="L = $(lat.L), M = $(lat.M), z = $(lat.z)", dpi=300, size=(400, 400), xlims=(-0.5, lat.M+0.5), ylims=(-0.5, lat.M+0.5))
 	for xy in lat.rods[1]
 		ys = repeat([xy[1]], lat.L)
-		xs = xy[2]:xy[2]+lat.L-1
-		scatter!(plt, xs, ys, color=:red, markersize=lat.M/24, label="", markershape=:rect)
+		xs = mod1.(xy[2]:xy[2]+lat.L-1, lat.M)
+		scatter!(plt, xs, ys, color=:red, markersize=64^2 / 24 / lat.M, label="", markershape=:rect)
 	end
 	for xy in lat.rods[2]
 		xs = repeat([xy[2]], lat.L)
-		ys = xy[1]:xy[1]+lat.L-1
-		scatter!(plt, xs, ys, color=:blue, markersize=lat.M/24, label="", markershape=:rect)
+		ys = mod1.(xy[1]:xy[1]+lat.L-1, lat.M)
+		scatter!(plt, xs, ys, color=:blue, markersize=64^2 / 24 / lat.M, label="", markershape=:rect)
 	end
 	return plt
 end

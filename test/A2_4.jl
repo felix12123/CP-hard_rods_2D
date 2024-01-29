@@ -1,12 +1,13 @@
 using Statistics
 using Plots
-
+using Measurements
+using LsqFit
 
 function A2_4()
 	zs = [0.05, 0.125, 0.25, 0.56, 0.84, 1.1, 1.15, 1.5]
 	M = 64
 	L = 8
-	n = 4e7
+	n = 4e8
 	
 	Nh(lat) = length(lat.rods[1])
 	Nv(lat) = length(lat.rods[2])
@@ -15,7 +16,7 @@ function A2_4()
 	S(lat)  = (N1 = Nh(lat); N2 = Nv(lat); return (N1-N2)/(N1+N2))
 	absS(lat) = abs(S(lat))
 	observables = [absS, η]
-	obs_interv = n÷1e5
+	obs_interv = min(2e4, n÷1e5)
 
 	obss = [[] for _ in zs]
 	Threads.@threads for i in eachindex(zs)
@@ -23,9 +24,15 @@ function A2_4()
 		obss[i] = obs
 	end
 
-	absSs = [mean(obs[1]) for obs in obss]
-	ηs = [mean(obs[2]) for obs in obss]
+	absSs = Measurement{Float64}[]
+	ηs = Measurement{Float64}[]
 
-	scatter(ηs, absSs, dpi=300, xlabel="η", ylabel="|S|", label="", title="M=$M, L=$L, steps=$n", legend=:topleft)
+	for i in eachindex(obss)
+		append!(absSs, mean(obss[i][1]) ± 1/sqrt(length(obss[i]))*std(obss[i][1]))
+		append!(ηs, mean(obss[i][2]) ± 1/sqrt(length(obss[i]))*std(obss[i][2]))
+	end
+
+	plt = scatter(ηs, absSs, dpi=300, xlabel="η", ylabel="|S|", label="", title="M=$M, L=$L, steps=$n", legend=:topleft)
+	savefig(plt, "media/A2_4/A2_4_scatter.png")
 
 end

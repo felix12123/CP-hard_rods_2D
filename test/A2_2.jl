@@ -29,13 +29,6 @@ function A2_2()
 		histogram!(obs[1][1:n_few] ./ 2, label="N/2", alpha=0.5)
 		savefig(hist, "media/A2_2/A2_2_hist_few_steps_z$(zs[i]).png")
 	end
-	# lat, obs, _ = simulate_RodLat2D(M, L, zs[i], n, observables=observables, observables_interval=obs_interv)
-
-	# N_plt = plot(eachindex(obs[1]).* obs_interv .- (1 - obs_interv), obs[1:3] .* [0.5, 1, 1], dpi=300, title="S", label=["N/2" "Nh" "Nv"])
-	# S_plt = plot(eachindex(obs[1]).* obs_interv .- (1 - obs_interv), obs[4], dpi=300, title="S", legend=false)
-	# hline!([0.0])
-	# η_plt = plot(eachindex(obs[5]).* obs_interv .- (1 - obs_interv), obs[5], dpi=300, title="η", legend=false, label=["η"])
-	# plot(N_plt, S_plt, η_plt, layout=(3,1))
 
 
 end

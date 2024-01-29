@@ -115,7 +115,7 @@ Simulates the behavior of a 2D lattice of rods.
 """
 function simulate_RodLat2D(M, L, z, n; observables=Function[], observables_interval=max(1, n÷1e4))
 	# storage containers for observables
-	observed_vals = [[] for i in eachindex(observables)]
+	observed_vals = [zeros(ceil(Int, n / observables_interval)) for i in eachindex(observables)]
 
 	# prethermalize the lattice
 	lat, therm_ind = make_thermalized_lat(M, L, z, n)
@@ -137,7 +137,7 @@ function simulate_RodLat2D(M, L, z, n; observables=Function[], observables_inter
 		# calculate observables
 		if i % observables_interval == 1
 			for j in eachindex(observables)
-				push!(observed_vals[j], observables[j](lat))
+				observed_vals[j][ceil(Int, i/observables_interval)] = observables[j](lat)
 			end
 		end 
 	end
