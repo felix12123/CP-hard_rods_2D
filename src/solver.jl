@@ -13,26 +13,15 @@ Attempt to insert a rod into the lattice `lat` according to the hard rod model i
 # Returns
 - `Bool`: `true` if the insertion was successful, `false` otherwise.
 """
-function try_insert!(lat::RodLat2D)
+function try_insert!(lat::RodLat2D)::Bool
 	N = length(lat.rods[1]) + length(lat.rods[2])
 	α_ins = 2*lat.M^2 / (N+1) * lat.z
-	xy = (rand(1:lat.M), rand(1:lat.M-lat.L+1))
-
-	if bitrand()[1] # horizontal
-		if rand() < α_ins && !is_colliding(lat, xy, true)
-			insert_rod!(lat, xy, true, test_collision=false)
-			return true
-		else
-			return false
-		end
-	else # vertical
-		if rand() < α_ins && !is_colliding(lat, xy, false)
-			insert_rod!(lat, xy, false, test_collision=false)
-			return true
-		else
-			return false
-		end
+	
+	if rand() < α_ins
+		xy = (rand(1:lat.M), rand(1:lat.M-lat.L+1))
+		return insert_rod!(lat, xy, rand((0,1)))
 	end
+	return false
 end
 
 
@@ -59,9 +48,8 @@ function try_delete!(lat::RodLat2D)
 			delete_rod!(lat, lat.rods[2][i-length(lat.rods[1])], false)
 		end
 		return true
-	else
-		return false
 	end
+	return false
 end
 
 
@@ -83,7 +71,7 @@ function make_thermalized_lat(M, L, z, n)
 		end
 
 		# chose 50/50 if insertion or deletion
-		if bitrand()[1] # insertion
+		if rand((0,1)) # insertion
 			try_insert!(lat)
 		else # deletion
 			try_delete!(lat)
@@ -113,7 +101,11 @@ Simulates the behavior of a 2D lattice of rods.
 - `observed_vals`: Array of observed values at each observables_interval.
 
 """
-function simulate_RodLat2D(M, L, z, n; observables=Function[], observables_interval=max(1, n÷1e4))
+function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables=Function[], observables_interval=max(1, n÷1e4))
+		n = ceil(Int, n)
+		M = ceil(Int, M)
+		L = ceil(Int, L)
+		
 	# storage containers for observables
 	observed_vals = [[] for i in eachindex(observables)]
 
@@ -128,7 +120,7 @@ function simulate_RodLat2D(M, L, z, n; observables=Function[], observables_inter
 		end
 
 		# chose 50/50 if insertion or deletion
-		if bitrand()[1] # insertion
+		if rand((0,1)) # insertion
 			try_insert!(lat)
 		else # deletion
 			try_delete!(lat)
@@ -145,4 +137,6 @@ function simulate_RodLat2D(M, L, z, n; observables=Function[], observables_inter
 	progress_bar(1.0, keep_bar=false)
 	return lat, observed_vals, therm_ind
 end
+
+
 

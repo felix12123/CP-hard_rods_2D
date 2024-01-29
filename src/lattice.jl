@@ -91,27 +91,17 @@ function delete_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
 			lat.grid[mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M)] .= 0
 			lat.rods[1] = filter(x -> x != xy, lat.rods[1])
 			return true
-		else
-			return false
 		end
+		return false
 	else
 		if (all(view(lat.grid, mod1.(xy[1]:xy[1]+lat.L-1, lat.M), mod1(xy[2], lat.M))))
 			lat.grid[mod1.(xy[1]:xy[1]+lat.L-1, lat.M), mod1(xy[2], lat.M)] .= 0
 			lat.rods[2] = filter(x -> x != xy, lat.rods[2])
+			return true
 		end
+		return false
 	end
 end
-
-"""
-	delete_rod!(lat::RodLat2D, xy::NTuple{2, Int})
-
-Delete a rod from the lattice at the specified coordinates.
-
-Arguments
-- `lat::RodLat2D`: The 2D lattice of rods.
-- `xy::NTuple{2, Int}`: The coordinates of the rod to be deleted.
-
-"""
 function delete_rod!(lat::RodLat2D, xy::NTuple{2, Int})
 	if findfirst(x -> x == xy, lat.rods[1]) != nothing
 		delete_rod!(lat, xy, true)
