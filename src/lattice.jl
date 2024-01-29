@@ -61,14 +61,18 @@ function insert_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool; test_c
 		if !test_collision || !is_colliding(lat, xy, true)
 			lat.grid[mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M)] .= 1
 			append!(lat.rods[1], [xy])
+			return true
 		end
 	else
 		if !test_collision || !is_colliding(lat, xy, false)
 			lat.grid[mod1.(xy[1]:xy[1]+lat.L-1, lat.M), mod1(xy[2], lat.M)] .= 1
 			append!(lat.rods[2], [xy])
+			return true
 		end
 	end
+	return false
 end
+insert_rod!(;lat=RodLat2D(16, 4, 0.5), pos=(10, 15), horizontal=bitrand()[1])=insert_rod!(lat, pos, horizontal)
 
 """
 	delete_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)

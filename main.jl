@@ -22,15 +22,15 @@ end
 include("src/lattice.jl")
 include("src/solver.jl")
 include("src/utils.jl")
-include("test/allg_test.jl")
-include("test/A2_1.jl")
-include("test/A2_2.jl")
+
+include("test/A2_1.jl") # Thermalization
+include("test/A2_2.jl") # comparison of 3 zs and few/many steps
 include("test/A2_3.jl")
 include("test/A2_4.jl")
 
 # A2_1()
 # A2_2()
+A2_3()
 # A2_4()
-# a = (ProfileView.@profview A2_3())
-# display(a)
-# plot(a)
+
+# display(make_thermalized_lat(63, 8, 0.5, 1e6)[1])

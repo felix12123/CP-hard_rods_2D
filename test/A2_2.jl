@@ -2,7 +2,7 @@ function A2_2()
 	M = 64
 	L = 8
 	zs = [0.56, 0.84, 1.1]
-	n = 4e8
+	n = 4e5
 
 	Nh(lat) = length(lat.rods[1])
 	Nv(lat) = length(lat.rods[2])

@@ -16,10 +16,10 @@ Attempt to insert a rod into the lattice `lat` according to the hard rod model i
 function try_insert!(lat::RodLat2D)::Bool
 	N = length(lat.rods[1]) + length(lat.rods[2])
 	α_ins = 2*lat.M^2 / (N+1) * lat.z
-	
+	horizontal = bitrand()[1]	
 	if rand() < α_ins
-		xy = (rand(1:lat.M), rand(1:lat.M-lat.L+1))
-		return insert_rod!(lat, xy, rand((0,1)))
+		xy = (rand(1:lat.M), rand(1:lat.M))
+		return insert_rod!(lat=lat, pos=xy, horizontal=bitrand()[1])
 	end
 	return false
 end
@@ -71,7 +71,7 @@ function make_thermalized_lat(M, L, z, n)
 		end
 
 		# chose 50/50 if insertion or deletion
-		if rand((0,1)) # insertion
+		if bitrand()[1] # insertion
 			try_insert!(lat)
 		else # deletion
 			try_delete!(lat)
@@ -120,7 +120,7 @@ function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables=Funct
 		end
 
 		# chose 50/50 if insertion or deletion
-		if rand((0,1)) # insertion
+		if bitrand()[1] # insertion
 			try_insert!(lat)
 		else # deletion
 			try_delete!(lat)
