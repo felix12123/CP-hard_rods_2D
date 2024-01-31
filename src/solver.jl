@@ -51,6 +51,15 @@ function try_delete!(lat::RodLat2D)
 	return false
 end
 
+function get_thermalisation_time(M, L, z, n_max)
+	N = 10
+	s = 0.0
+	for _ in 1:N
+		s += make_thermalized_lat(M, L, z, n_max)[2]
+	end
+	return s/N
+end
+
 
 
 function make_thermalized_lat(M, L, z, n)
@@ -100,7 +109,7 @@ Simulates the behavior of a 2D lattice of rods.
 - `observed_vals`: Array of observed values at each observables_interval.
 
 """
-function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables=Function[], observables_interval=max(1, n÷1e4))
+function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables=Function[], observables_interval=get_thermalisation_time(M, L, z, n))
 	n = ceil(Int, n)
 	M = ceil(Int, M)
 	L = ceil(Int, L)

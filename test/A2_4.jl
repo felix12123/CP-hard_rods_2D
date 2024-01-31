@@ -9,7 +9,7 @@ function A2_4()
 	M = 64
 	L = 8
 	n = 4e9
-	n=1e8
+	# n=1e8
 	
 	Nh(lat) = length(lat.rods[1])
 	Nv(lat) = length(lat.rods[2])
@@ -18,11 +18,11 @@ function A2_4()
 	S(lat)  = (N1 = Nh(lat); N2 = Nv(lat); return (N1-N2)/(N1+N2))
 	absS(lat) = abs(S(lat))
 	observables = [absS, η]
-	obs_interv = min(2e4, n÷1e5)
+	# obs_interv = min(2e4, n÷1e5)
 
 	obss = [[] for _ in zs]
 	Threads.@threads for i in eachindex(zs)
-		lat, obs, _ = simulate_RodLat2D(M, L, zs[i], n, observables=observables, observables_interval=obs_interv)
+		lat, obs, _ = simulate_RodLat2D(M, L, zs[i], n, observables=observables)
 		obss[i] = obs
 	end
 
