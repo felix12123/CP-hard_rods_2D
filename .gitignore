@@ -23,7 +23,8 @@ docs/site/
 # environment.
 Manifest.toml
 
-
-# ignore media
+# media files
 *.png
 *.jpg
+*.jpeg
+*.gif
