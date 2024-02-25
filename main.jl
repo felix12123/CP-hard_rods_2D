@@ -1,27 +1,39 @@
+script_start_time = time()
 
+using Statistics, Plots, Measurements, Random, DelimitedFiles, BenchmarkTools, PyCall, Interpolations, FourierTools
 
-
-
-# steps for simulaiton: 4e9
-# Histogram for horizontal or vertical rods
-
+dirs = ["media", "media/A2_1", "media/A2_2", "media/A2_3", "media/A2_4", "src/act_objs"]
+for dir in dirs
+	if !isdir(dir)
+		mkdir(dir)
+	end
+end
 
 include("src/lattice.jl")
 include("src/solver.jl")
 include("src/utils.jl")
-n = 4e8
-M = 64
-L = 8
-zs = [0.56, 0.84, 1.1]
-z = zs[1]
+include("src/auto_corr.jl")
 
+include("test/A2_1.jl") # Thermalization
+include("test/A2_2.jl") # comparison of 3 zs and few/many steps
+include("test/A2_3.jl") # 
+include("test/A2_4.jl")
 
-Nh(lat) = length(lat.rods[1]) / (length(lat.rods[1]) + length(lat.rods[2]))
-@time lat, observs = simulate_RodLat2D(M, L, z, n, observables=[Nh], observables_interval=n÷1e5)
+include("src/act.jl")
 
+if time() - script_start_time > 60 * 5
+	HTTP.request("POST", "https://ntfy.sh/julia_scripts46182355781653856", body="Ising hat fertig kompiliert. Es lief $((time() - script_start_time)÷60) Minuten")
+end
 
-plt = visualize_RodLat2D(lat)
-display(plt)
-display(histogram(observs[1], dpi=300, title="N_h", legend=false))
+# A2_1()
+# A2_2()
+# A2_3()
+# A2_4()
 
+nothing
 
+# optimization improvements:
+# 166 ms # before optimization
+# 116 ms # is colliding update
+# 91  ms # insertion/deletion optimization
+# @benchmark simulate_RodLat2D(64, 8, 0.84, 1e6) seconds=10
