@@ -26,7 +26,7 @@ function progress_bar(progress::Number; width=displaysize(stdout)[2], keep_bar=f
 			print("\r" * " "^width*"\r")
 		end
 	else
-		print("\r" * "█"^round(Int, progress*width) * "━"^round(Int, (1-progress)*width))
+		print("\r" * "█"^round(Int, progress*width) * "━"^round(Int, (1-progress)*width), "\r")
 	end
 end
 

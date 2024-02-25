@@ -38,14 +38,31 @@ Returns
 """
 function is_colliding(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
 	if horizontal
+		for i in xy[2]:xy[2]+lat.L-1
+			if lat.grid[mod1(xy[1], lat.M), mod1(i, lat.M)]
+				return true
+			end
+		end
+	else
+		for i in xy[1]:xy[1]+lat.L-1
+			if lat.grid[mod1(i, lat.M), mod1(xy[2], lat.M)]
+				return true
+			end
+		end
+	end
+	return false
+end
+function is_colliding_old(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
+	if horizontal
 		return any(view(lat.grid, mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M)))
 	else
 		return any(view(lat.grid, mod1.(xy[1]:xy[1]+lat.L-1, lat.M), mod1(xy[2], lat.M)))
 	end
 end
 
+
 """
-	insert_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool; test_collision=false)
+	insert_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool; test_collision=true)
 
 Inserts a rod into the lattice at the specified coordinates.
 
@@ -72,7 +89,7 @@ function insert_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool; test_c
 	end
 	return false
 end
-insert_rod!(;lat=RodLat2D(16, 4, 0.5), pos=(10, 15), horizontal=rand((true, false)))=insert_rod!(lat, pos, horizontal)
+# insert_rod!(;lat=RodLat2D(16, 4, 0.5), pos=(10, 15), horizontal=rand((true, false)))=insert_rod!(lat, pos, horizontal)
 
 """
 	delete_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
@@ -89,7 +106,18 @@ Returns:
 - `false` if the rod could not be deleted due to overlapping with other rods.
 
 """
-function delete_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
+function delete_rod!(lat::RodLat2D, i::Int, horizontal::Bool)
+	if horizontal
+		xy = lat.rods[1][i]
+		lat.grid[mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M)] .= 0
+		deleteat!(lat.rods[1], i)
+	else
+		xy = lat.rods[2][i]
+		lat.grid[mod1.(xy[1]:xy[1]+lat.L-1, lat.M), mod1(xy[2], lat.M)] .= 0
+		deleteat!(lat.rods[2], i)
+	end
+end
+function delete_rod_old!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
 	if horizontal
 		if (all(view(lat.grid, mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M))))
 			lat.grid[mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M)] .= 0
@@ -106,10 +134,10 @@ function delete_rod!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
 		return false
 	end
 end
-function delete_rod!(lat::RodLat2D, xy::NTuple{2, Int})
-	if findfirst(x -> x == xy, lat.rods[1]) != nothing
-		delete_rod!(lat, xy, true)
-	else
-		delete_rod!(lat, xy, false)
-	end
-end
+# function delete_rod!(lat::RodLat2D, xy::NTuple{2, Int})
+# 	if findfirst(x -> x == xy, lat.rods[1]) != nothing
+# 		delete_rod!(lat, xy, true)
+# 	else
+# 		delete_rod!(lat, xy, false)
+# 	end
+# end
