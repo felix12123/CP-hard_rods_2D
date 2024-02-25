@@ -36,7 +36,7 @@ function act_poly(M::Int, L::Int, ns::Vector{<:Real}, zs::Vector{<:Real}, obss; 
 	
 	# simulate and collect observables
 	ds = [[] for _ in zs]
-	Threads.@threads for i in eachindex(zs)
+	Threads.@threads for i in eachindex(zs) |> reverse
 		_, obs, _ = simulate_RodLat2D(M, L, zs[i], ns[i], observables=copy(obss), observables_interval=obs_intervals[i])
 		ds[i] = obs
 	end
@@ -83,7 +83,7 @@ function create_N_act_obj()
 
 	observables = [N, η]
 	zs = [0.05, 0.125, 0.25, 0.56, 0.84, 1.1, 1.15, 1.5]
-	ns = 2*[1e8,  1e8,   1e8,  1e8,  1e8,  2e8, 5e8,  1e9]
+	ns = [1e8,  1e8,   1e8,  1e8,  1e8,  2e8, 5e8,  1e9]
 	
 	act_funcs = act_poly(64, 8, ns, zs, observables)
 	
@@ -93,24 +93,12 @@ function create_N_act_obj()
 	end
 end
 
-create_N_act_obj()
+# create_N_act_obj()
 create_S_act_obj()
 
-
-# Nh(lat) = length(lat.rods[1])
-# Nv(lat) = length(lat.rods[2])
-# N(lat)  = Nh(lat) + Nv(lat)
-# S(lat)  = (N1 = length(lat.rods[1]); N2 = length(lat.rods[2]); return (N1-N2)/(N1+N2))
-# abs_S(lat) = abs(S(lat))
-
-# oi = 10^2
-# data = simulate_RodLat2D(64, 8, 0.84, 5e8, observables=[N], observables_interval=oi)[2][1]
-
-# println(act(data[1:end÷10])*oi)
-# println(act(data)*oi)
-
-# len = length(data)
-# ns = [len, len ÷ 2, len ÷ 4, len ÷ 8, len ÷ 16, len ÷ 32, len ÷ 64, len ÷ 128]
-
-# acts = [act(data[1:n])*oi for n in ns]
-# plot(ns, acts)
+function display_actjdl(path::String)
+	act_func = load_object(path)
+	x = range(minimum(act_func.knots), maximum(act_func.knots), length=200)
+	y = act_func.(x)
+	plot(x, y) |> display
+end

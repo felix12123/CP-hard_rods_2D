@@ -1,5 +1,5 @@
 using Random
-
+using CircularArrays
 
 
 """
@@ -65,7 +65,7 @@ function make_thermalized_lat(M, L, z, n)
 	n = ceil(Int, n)
 
 	N(lat) = length(lat.rods[1]) + length(lat.rods[2])
-	Ns = zeros(Int, n)
+	Ns = zeros(Int, M^2+1) |> CircularArray
 	lat = RodLat2D(M, L, z)
 	
 	for i in 1:n
