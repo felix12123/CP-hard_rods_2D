@@ -1,10 +1,18 @@
-function A2_3()
+function A2_3(;test_mode=false)
 	println("==================== A2_3 ====================")
-	# n = 4e9
-	n::Int = 4e7
-	M::Int = 64
-	L::Int = 8
-	zs = Float64[0.56, 0.84, 1.1]
+
+	# set parameters for test or full run
+	if test_mode
+		n = 4e8
+		M = 64 ÷ 2
+		L = 8 ÷ 2
+		zs = Float64[0.56, 0.84, 1.1]
+	else
+		n = 4e9
+		M = 64
+		L = 8
+		zs = Float64[0.56, 0.84, 1.1]
+	end
 
 	Nh(lat) = length(lat.rods[1])
 	Nv(lat) = length(lat.rods[2])
@@ -16,8 +24,9 @@ function A2_3()
 	# obs_interv = 2e4
 	hist = histogram(dpi=300, title="S for M=$M, L=$L, steps=$n", legend=:topleft)
 	res = [[], [], []]
+	obs_interv = n ÷ 4e6
 	Threads.@threads for i in eachindex(zs)
-		lat, obs, _ = simulate_RodLat2D(M, L, zs[i], n, observables=observables)
+		lat, obs, _ = simulate_RodLat2D(M, L, zs[i], n, observables=observables, observables_interval=obs_interv)
 		res[i] = obs[1]
 	end
 	for i in eachindex(zs)

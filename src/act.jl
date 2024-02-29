@@ -58,10 +58,12 @@ end
 
 function create_S_act_obj()
 	# observables
+	Nh(lat) = length(lat.rods[1])
+	Nv(lat) = length(lat.rods[2])
 	S(lat)  = (N1 = length(lat.rods[1]); N2 = length(lat.rods[2]); return (N1-N2)/(N1+N2))
 	absS(lat) = abs(S(lat))
 
-	observables = [S, absS]
+	observables = [S, absS, Nh, Nv]
 	zs = [0.05, 0.125, 0.25, 0.56, 0.84, 1.1, 1.15, 1.5]
 	ns = [4e9,  4e9,   4e9,  4e9,  4e9,  1e10, 1e10,  1e10]
 	
@@ -93,8 +95,7 @@ function create_N_act_obj()
 	end
 end
 
-# create_N_act_obj()
-create_S_act_obj()
+
 
 function display_actjdl(path::String)
 	act_func = load_object(path)
