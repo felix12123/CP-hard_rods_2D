@@ -65,9 +65,9 @@ function create_S_act_obj()
 
 	observables = [S, absS, Nh, Nv]
 	zs = [0.05, 0.125, 0.25, 0.56, 0.84, 1.1, 1.15, 1.5]
-	ns = [4e9,  4e9,   4e9,  4e9,  4e9,  1e10, 1e10,  1e10]
+	ns = [4e9,  4e9,   4e9,  4e9,  4e9,  1e10, 1e10,  4e10]
 	
-	act_funcs = act_poly(64, 8, ns, zs, observables, min_interv=1e3)
+	act_funcs = act_poly(64, 8, ns, zs, observables, min_interv=1e4)
 	display(act_funcs)
 	
 	# save act objects
