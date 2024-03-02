@@ -20,7 +20,7 @@ function show_thermalisation(M, L, z, n; observables=Function[], observables_int
 				themalized = true
 				therm_ind = i - M^2/2
 			else
-				if !pre_therm_pic && i > 1e4
+				if !pre_therm_pic && i > 3e2
 					pre_therm_pic = true
 					savefig(visualize_RodLat2D(lat), "media/A2_1/pre_therm_lat.png")
 				end
@@ -45,7 +45,7 @@ end
 
 
 
-function A2_1()
+function A2_1(;test_mode=false)
 	println("==================== A2_1 ====================")
 	n = 5e4
 	M = 64

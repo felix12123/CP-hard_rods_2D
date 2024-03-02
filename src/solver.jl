@@ -105,9 +105,13 @@ Simulates the behavior of a 2D lattice of rods.
 - `observed_vals`: Array of observed values at each observables_interval.
 """
 function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables::Vector=Function[], observables_interval=0)
-	observables_interval = ceil(Int, observables_interval)
+	observables_interval = ceil.(Int, observables_interval)
 	if observables_interval == 0
 		observables_interval = get_thermalisation_time(M, L, z, n)
+	end
+
+	if isa(observables_interval, Number)
+		observables_interval = fill(observables_interval, size(observables))
 	end
 
 	n = ceil(Int, n)
@@ -116,7 +120,7 @@ function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables::Vect
 	println("starting eval with M=$M, L=$L, z=$z, n=$n, observables_interval=$observables_interval, observables=$(string.(observables))")
 		
 	# storage containers for observables
-	observed_vals = [fill(NaN, ceil(Int, n / observables_interval)) for i in eachindex(observables)]
+	observed_vals = [fill(NaN, ceil(Int, n / observables_interval[i])) for i in eachindex(observables)]
 
 	# prethermalize the lattice
 	lat, therm_ind = make_thermalized_lat(M, L, z, n)
@@ -136,9 +140,9 @@ function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables::Vect
 		end
 
 		# calculate observables
-		if (i-1) % observables_interval == 0
-			for j in eachindex(observables)
-				observed_vals[j][ceil(Int, i/observables_interval)] = observables[j](lat)
+		for j in eachindex(observables)
+			if (i-1) % observables_interval[j] == 0
+				observed_vals[j][ceil(Int, i/observables_interval[j])] = observables[j](lat)
 			end
 		end 
 	end
