@@ -117,27 +117,3 @@ function delete_rod!(lat::RodLat2D, i::Int, horizontal::Bool)
 		deleteat!(lat.rods[2], i)
 	end
 end
-function delete_rod_old!(lat::RodLat2D, xy::NTuple{2, Int}, horizontal::Bool)
-	if horizontal
-		if (all(view(lat.grid, mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M))))
-			lat.grid[mod1(xy[1], lat.M), mod1.(xy[2]:xy[2]+lat.L-1, lat.M)] .= 0
-			lat.rods[1] = filter(x -> x != xy, lat.rods[1])
-			return true
-		end
-		return false
-	else
-		if (all(view(lat.grid, mod1.(xy[1]:xy[1]+lat.L-1, lat.M), mod1(xy[2], lat.M))))
-			lat.grid[mod1.(xy[1]:xy[1]+lat.L-1, lat.M), mod1(xy[2], lat.M)] .= 0
-			lat.rods[2] = filter(x -> x != xy, lat.rods[2])
-			return true
-		end
-		return false
-	end
-end
-# function delete_rod!(lat::RodLat2D, xy::NTuple{2, Int})
-# 	if findfirst(x -> x == xy, lat.rods[1]) != nothing
-# 		delete_rod!(lat, xy, true)
-# 	else
-# 		delete_rod!(lat, xy, false)
-# 	end
-# end

@@ -106,6 +106,11 @@ Simulates the behavior of a 2D lattice of rods.
 """
 function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables::Vector=Function[], observables_interval=0)
 	observables_interval = ceil.(Int, observables_interval)
+	if n ÷ observables_interval > 1e8
+		@warn "Too many values would be recorded, reducing to 1e8. consider increasing observables_interval or reducing n."
+		observables_interval = ceil.(Int, n ÷ 1e8)
+	end
+	# set observables_interval to a reasonable value, if not given
 	if observables_interval == 0
 		observables_interval = get_thermalisation_time(M, L, z, n)
 	end
@@ -149,6 +154,3 @@ function simulate_RodLat2D(M::Real, L::Real, z::Real, n::Real; observables::Vect
 	progress_bar(1.0, keep_bar=false)
 	return lat, observed_vals, therm_ind
 end
-
-
-

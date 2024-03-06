@@ -67,6 +67,5 @@ end
 
 import Base: display
 function display(lat::RodLat2D)
-	
 	display(visualize_RodLat2D(lat))
 end

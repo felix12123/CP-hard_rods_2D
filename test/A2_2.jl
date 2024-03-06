@@ -1,21 +1,31 @@
 function A2_2(;test_mode=false)
 	println("==================== A2_2 ====================")
-	M = 64
-	L = 8
+	if test_mode
+		M = 32
+		L = 4
+		n = 1e8
+	else
+		M = 64
+		L = 8
+		n = 4e9
+	end
 	zs = [0.56, 0.84, 1.1]
-	n = 4e9
-	# n = 4e8
 
 	Nh(lat) = length(lat.rods[1])
 	Nv(lat) = length(lat.rods[2])
 	N(lat)  = Nh(lat) + Nv(lat)
 
 	observables = [N, Nh, Nv]
-	# obs_interv = 2e4
+	
+	# data storage
 	obss = [[] for i in eachindex(zs)]
+
+	# simulate for different z
 	Threads.@threads for i in eachindex(zs)
-		obss[i] = simulate_RodLat2D(M, L, zs[i], n, observables=observables)[2]
+		obss[i] = simulate_RodLat2D(M, L, zs[i], n, observables=observables, observables_interval=ceil(n/1e7))[2]
 	end
+
+	# create histograms
 	for i in eachindex(zs)
 		# histogram for many steps
 		hist = histogram(obss[i][2], dpi=300, label="Nh", title="M=$M, L=$L, z=$(zs[i]), steps=$n", legend=:topleft, alpha=0.5, bins=100)
